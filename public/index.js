@@ -149,8 +149,25 @@ const actors = [{
 var tab=[0,0,0]; 
 for (var i =0; i<deliveries.length;i++) 
 { 
-    var infoTruck = infoTruckers(deliveries[i].truckerId); 
-    tab[i] = deliveries[i].distance*infoTruck[0] + deliveries[i].volume*infoTruck[1]; 
+    var infoTruck = infoTruckers(deliveries[i].truckerId);
+    tab[i] = deliveries[i].distance*infoTruck[0] + deliveries[i].volume*infoTruck[1];
+    if(deliveries[i].volume <= 5)
+    {
+      //No promotions
+    }
+    else if(deliveries[i].volume > 5 && deliveries[i].volume <= 10)
+    {
+      tab[i] *= 0.90; 
+    }
+    else if(deliveries[i].volume > 10 && deliveries[i].volume <= 25)
+    {
+      tab[i] *= 0.70;
+    }
+    else if(deliveries[i].volume > 25)
+    {
+      tab[i] *= 0.50;
+    }  
+     
 } 
  
 function infoTruckers(searchId) 
@@ -161,6 +178,9 @@ function infoTruckers(searchId)
       } 
     } 
 }
+
+//Step 2
+
 
 console.log(tab)
 console.log(truckers);
