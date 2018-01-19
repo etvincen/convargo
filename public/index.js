@@ -145,6 +145,24 @@ const actors = [{
   }]
 }];
 
+// Step 1 
+var tab=[0,0,0]; 
+for (var i =0; i<deliveries.length;i++) 
+{ 
+    var infoTruck = infoTruckers(deliveries[i].truckerId); 
+    tab[i] = deliveries[i].distance*infoTruck[0] + deliveries[i].volume*infoTruck[1]; 
+} 
+ 
+function infoTruckers(searchId) 
+{ 
+    for (var i = 0; i < truckers.length; i++) { 
+      if (searchId == truckers[i].id) { 
+        return [truckers[i].pricePerKm,truckers[i].pricePerVolume]; 
+      } 
+    } 
+}
+
+console.log(tab)
 console.log(truckers);
 console.log(deliveries);
 console.log(actors);
