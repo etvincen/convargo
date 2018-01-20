@@ -145,44 +145,49 @@ const actors = [{
   }]
 }];
 
-// Step 1 
-var tab=[0,0,0]; 
+// Step 1 & 2
+ 
 for (var i =0; i<deliveries.length;i++) 
 { 
-    var infoTruck = infoTruckers(deliveries[i].truckerId);
+    var tab=[0,0,0];
+    var infoTruck = iDTruckers(deliveries[i].truckerId);
+    var reductionprice = 0;
     tab[i] = deliveries[i].distance*infoTruck[0] + deliveries[i].volume*infoTruck[1];
     if(deliveries[i].volume <= 5)
     {
-      //No promotions
+      reductionprice = 1
     }
     else if(deliveries[i].volume > 5 && deliveries[i].volume <= 10)
     {
-      tab[i] *= 0.90; 
+      reductionprice = 0.90;
     }
     else if(deliveries[i].volume > 10 && deliveries[i].volume <= 25)
     {
-      tab[i] *= 0.70;
+      reductionprice = 0.70;
     }
     else if(deliveries[i].volume > 25)
     {
-      tab[i] *= 0.50;
-    }  
-     
-} 
+      reductionprice = 0.50;
+    }
+    tab[i] *= reductionprice;
+    deliveries[i].price = tab[i];    
+}
+
+
  
-function infoTruckers(searchId) 
+function iDTruckers(findId) 
 { 
-    for (var i = 0; i < truckers.length; i++) { 
-      if (searchId == truckers[i].id) { 
+    for (var i = 0; i < truckers.length; i++) 
+    { 
+      if (findId == truckers[i].id) 
+      { 
         return [truckers[i].pricePerKm,truckers[i].pricePerVolume]; 
       } 
     } 
 }
 
-//Step 2
+//Step 3
 
-
-console.log(tab)
 console.log(truckers);
 console.log(deliveries);
 console.log(actors);
