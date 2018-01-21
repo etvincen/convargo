@@ -172,8 +172,10 @@ var tab=[0,0,0];
       }
       tab[i] *= reductionprice;
       deliveries[i].price = tab[i];
-      SplitShippingPrice();    
+         
       DeductiblePrice();
+      SplitShippingPrice();
+      PayTheActors(); 
   }
 
  
@@ -205,11 +207,12 @@ function SplitShippingPrice()
   }
 }
 
+//Step 4
 function DeductiblePrice()
 {
   for(var i = 0; i<deliveries.length;i++)
   {
-    if(deliveries[i].deductibleReduction == true)
+    if(deliveries[i].options.deductibleReduction == true)
     {
       var infoTruck = iDTruckers(deliveries[i].truckerId);
       var oldvolumeprice = deliveries[i].volume*infoTruck[1];
@@ -217,11 +220,35 @@ function DeductiblePrice()
       var newvolumeprice = deliveries[i].volume*infoTruck[1] + surplus ;
 
       deliveries[i].price = deliveries[i].price + (newvolumeprice - oldvolumeprice);
-    }    
-
+    }  
   }
 }
 
+//Step 5
+function PayTheActors()
+{
+  for(var i = 0; i<deliveries.length;i++)
+  {
+    for(var j = 0; j<actors.length;j++)
+    {
+      if(actors[j].deliveryId == deliveries[i].id)
+      {
+        var truckerAmount = deliveries[i].price*0.7;
+
+        actors[j].payment[0].amount = deliveries[i].price;
+        actors[j].payment[1].amount = truckerAmount;
+        actors[j].payment[2].amount = deliveries[i].commission.insurance;
+        actors[j].payment[3].amount = deliveries[i].commission.treasury;
+        actors[j].payment[4].amount = deliveries[i].commission.convargo;
+
+      }
+    }
+  }   
+}
+
+
+//Je crois avoir mal compris l'étape 4. Quand l'option de réduction déductible est mise à vrai, le "shipper" doit payer 1€/m3 en +, mais doit-il aussi rajouter 200€ ?
+// Ou alors c'est seulement dans le cas où il y a vol/accident ? Dans le doute je n'ai pas rajouter ces 200€ aux frais du "shipper".
 
 console.log(truckers);
 console.log(deliveries);
