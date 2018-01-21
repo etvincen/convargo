@@ -147,32 +147,34 @@ const actors = [{
 
 // Step 1 & 2
  
-for (var i =0; i<deliveries.length;i++) 
-{ 
-    var tab=[0,0,0];
-    var infoTruck = iDTruckers(deliveries[i].truckerId);
-    var reductionprice = 0;
-    tab[i] = deliveries[i].distance*infoTruck[0] + deliveries[i].volume*infoTruck[1];
-    if(deliveries[i].volume <= 5)
-    {
-      reductionprice = 1
-    }
-    else if(deliveries[i].volume > 5 && deliveries[i].volume <= 10)
-    {
-      reductionprice = 0.90;
-    }
-    else if(deliveries[i].volume > 10 && deliveries[i].volume <= 25)
-    {
-      reductionprice = 0.70;
-    }
-    else if(deliveries[i].volume > 25)
-    {
-      reductionprice = 0.50;
-    }
-    tab[i] *= reductionprice;
-    deliveries[i].price = tab[i];    
-}
-
+var tab=[0,0,0];
+  for (var i =0; i<deliveries.length;i++) 
+  { 
+      
+      var infoTruck = iDTruckers(deliveries[i].truckerId);
+      var reductionprice = 0;
+      tab[i] = deliveries[i].distance*infoTruck[0] + deliveries[i].volume*infoTruck[1];
+      if(deliveries[i].volume <= 5)
+      {
+        reductionprice = 1
+      }
+      else if(deliveries[i].volume > 5 && deliveries[i].volume <= 10)
+      {
+        reductionprice = 0.90;
+      }
+      else if(deliveries[i].volume > 10 && deliveries[i].volume <= 25)
+      {
+        reductionprice = 0.70;
+      }
+      else if(deliveries[i].volume > 25)
+      {
+        reductionprice = 0.50;
+      }
+      tab[i] *= reductionprice;
+      deliveries[i].price = tab[i];
+      SplitShippingPrice();    
+      DeductiblePrice();
+  }
 
  
 function iDTruckers(findId) 
@@ -187,6 +189,39 @@ function iDTruckers(findId)
 }
 
 //Step 3
+
+function SplitShippingPrice()
+{
+  for(var i = 0; i<deliveries.length;i++)
+  {
+      var com = deliveries[i].price*0.30;
+      var insurance = com /2;
+      var treasury = Math.floor(deliveries[i].distance/500 + 1);
+      var convargcom = com - (insurance + treasury);
+
+      deliveries[i].commission.insurance = insurance;
+      deliveries[i].commission.convargo = convargcom;
+      deliveries[i].commission.treasury = treasury;
+  }
+}
+
+function DeductiblePrice()
+{
+  for(var i = 0; i<deliveries.length;i++)
+  {
+    if(deliveries[i].deductibleReduction == true)
+    {
+      var infoTruck = iDTruckers(deliveries[i].truckerId);
+      var oldvolumeprice = deliveries[i].volume*infoTruck[1];
+      var surplus = deliveries[i].volume;
+      var newvolumeprice = deliveries[i].volume*infoTruck[1] + surplus ;
+
+      deliveries[i].price = deliveries[i].price + (newvolumeprice - oldvolumeprice);
+    }    
+
+  }
+}
+
 
 console.log(truckers);
 console.log(deliveries);
